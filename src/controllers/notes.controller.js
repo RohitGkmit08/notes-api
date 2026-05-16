@@ -65,7 +65,7 @@ const deleteNote = async (req, res) => {
     if (!note) {
       return res.status(404).json({ success: false, message: 'Note not found' });
     }
-    res.status(200).json({
+    res.status(204).json({
       success: true,
       message: 'Note deleted successfully',
     });
@@ -76,7 +76,7 @@ const deleteNote = async (req, res) => {
 
 const shareNote = async (req, res) => {
   try {
-    const note = await notesService.shareNote(req.params.id, req.user._id, req.body.email);
+    const note = await notesService.shareNote(req.params.id, req.user._id, req.body.share_with_email);
     res.status(200).json({
       success: true,
       message: 'Note shared successfully',

@@ -43,7 +43,7 @@ const loginUser = async (email, password) => {
   );
 
   return {
-    token,
+    access_token : token,
     user: {
       _id: user._id,
       name: user.name,
