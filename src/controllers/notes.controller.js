@@ -15,11 +15,12 @@ const createNote = async (req, res) => {
 
 const getAllNotes = async (req, res) => {
   try {
-    const notes = await notesService.getAllNotes(req.user._id);
+    const result = await notesService.getAllNotes(req.user._id, req.query);
     res.status(200).json({
       success: true,
       message: 'Notes retrieved successfully',
-      data: notes,
+      data: result.notes,
+      pagination: result.pagination,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

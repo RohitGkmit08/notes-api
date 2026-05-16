@@ -13,11 +13,57 @@ const createNote = async (userId, data) => {
   return note;
 };
 
-const getAllNotes = async (userId) => {
-  const notes = await Note.find({
+const getAllNotes = async (userId, query) => {
+  const {
+    search,
+    tag,
+    isPinned,
+    isArchived,
+    page = 1,
+    limit = 10,
+    sortBy = 'createdAt',
+    order = 'desc',
+  } = query;
+
+  const filter = {
     $or: [{ owner: userId }, { sharedWith: userId }],
-  }).sort({ createdAt: -1 });
-  return notes;
+  };
+
+  if (search) {
+    filter.$text = { $search: search };
+  }
+
+  if (tag) {
+    filter.tags = tag.toLowerCase();
+  }
+
+  if (isPinned !== undefined) {
+    filter.isPinned = isPinned === 'true';
+  }
+
+  if (isArchived !== undefined) {
+    filter.isArchived = isArchived === 'true';
+  }
+
+  const skip = (Number(page) - 1) * Number(limit);
+  const sortOrder = order === 'desc' ? -1 : 1;
+
+  const notes = await Note.find(filter)
+    .sort({ [sortBy]: sortOrder })
+    .skip(skip)
+    .limit(Number(limit));
+
+  const total = await Note.countDocuments(filter);
+
+  return {
+    notes,
+    pagination: {
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      totalPages: Math.ceil(total / Number(limit)),
+    },
+  };
 };
 
 const getNoteById = async (noteId, userId) => {
