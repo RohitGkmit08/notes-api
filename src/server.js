@@ -11,6 +11,13 @@ app.use(express.json());
 
 connectDB();
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Notes API is running',
+    docs: 'https://notes-api-om4a.onrender.com/openapi.json',
+  });
+});
+
 app.use('/', routes);
 
 app.get('/about', (req, res) => {
