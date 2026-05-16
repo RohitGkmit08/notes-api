@@ -23,7 +23,7 @@ app.use('/', routes);
 app.get('/about', (req, res) => {
   res.status(200).json({
     name: 'Rohit Sinha',
-    email: 'rohit@example.com',
+    email: 'sinharohit96690.com',
     my_features: {
       'Advanced Search': 'Full-text search across note title and content using MongoDB text indexes.',
       'Tag Filtering': 'Filter notes by tags for better organization.',
