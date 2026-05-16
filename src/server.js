@@ -38,7 +38,7 @@ app.get('/openapi.json', (req, res) => {
     },
     servers: [
       {
-        url: 'http://localhost:5001',
+        url: process.env.BASE_URL || 'http://localhost:5001',
       },
     ],
     paths: {
