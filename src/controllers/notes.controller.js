@@ -44,9 +44,6 @@ const getNoteById = async (req, res) => {
 
 const updateNote = async (req, res) => {
   try {
-    if (!req.body || Object.keys(req.body).length === 0) {
-      return res.status(400).json({ success: false, message: 'Please provide data to update. Check your Postman body format (use raw JSON).' });
-    }
     const note = await notesService.updateNote(req.params.id, req.user._id, req.body);
     if (!note) {
       return res.status(404).json({ success: false, message: 'Note not found' });
@@ -76,4 +73,17 @@ const deleteNote = async (req, res) => {
   }
 };
 
-module.exports = { createNote, getAllNotes, getNoteById, updateNote, deleteNote };
+const shareNote = async (req, res) => {
+  try {
+    const note = await notesService.shareNote(req.params.id, req.user._id, req.body.email);
+    res.status(200).json({
+      success: true,
+      message: 'Note shared successfully',
+      data: note,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { createNote, getAllNotes, getNoteById, updateNote, deleteNote, shareNote };

@@ -1,4 +1,5 @@
 const Note = require('../models/note.model');
+const User = require('../models/user.model');
 
 const createNote = async (userId, data) => {
   const note = await Note.create({
@@ -44,4 +45,32 @@ const deleteNote = async (noteId, userId) => {
   return note;
 };
 
-module.exports = { createNote, getAllNotes, getNoteById, updateNote, deleteNote };
+const shareNote = async (noteId, ownerId, email) => {
+  
+  const userToShare = await User.findOne({ email });
+  if (!userToShare) {
+    throw new Error('User not found');
+  }
+
+  if (userToShare._id.toString() === ownerId.toString()) {
+    throw new Error('You cannot share a note with yourself');
+  }
+
+  // Find the note and make sure the requester is the owner
+  const note = await Note.findOne({ _id: noteId, owner: ownerId });
+  if (!note) {
+    throw new Error('Note not found');
+  }
+
+  // Check if already shared
+  if (note.sharedWith.includes(userToShare._id)) {
+    throw new Error('Note is already shared with this user');
+  }
+
+  // Add user to sharedWith array
+  note.sharedWith.push(userToShare._id);
+  await note.save();
+
+  return note;
+};
+module.exports = { createNote, getAllNotes, getNoteById, updateNote, deleteNote, shareNote };
